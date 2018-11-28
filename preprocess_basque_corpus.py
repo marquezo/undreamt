@@ -15,23 +15,11 @@ def chunks(l, n):
         yield l[i:i + n]
 
 
-def update_line(line, vocab, unk_token='<UNK>'):
-    new_tokens = []
-
-    for token in line.split():
-        if token in vocab:
-            new_tokens.append(token)
-        else:
-            new_tokens.append(unk_token)
-
-    return ' '.join(new_tokens)
-
-
 # mark all OOV with "unk" for all lines
 def update_dataset(lines, vocab, unk_token='<UNK>'):
     new_lines = []
 
-    for line in tqdm(lines):
+    for line in lines:
         new_tokens = []
 
         for token in line.split():
@@ -108,13 +96,13 @@ def process_corpus(corpus, min_tokens, max_tokens, size_vocab, sentence_tokenize
     # Break into 1000 chunks
     num_chunks = 1000
     chunked_sentences = chunks(sentences, num_chunks)
-    vocab_repeated = repeat(vocab, num_chunks)
+    vocab_repeated = repeat(vocab, len(chunked_sentences))
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         for updated_sents in executor.map(update_dataset, chunked_sentences, vocab_repeated):
             updated_sentences.extend(updated_sents)
 
-            if len(updated_sentences) % 1000 == 0:
+            if len(updated_sentences) % 10000 == 0:
                 print("Processed {} sentences".format(len(updated_sentences)))
 
     return vocab, updated_sentences
