@@ -13,3 +13,4 @@ sed -i '/<TR>/d' eu-wiki.txt
 sed -i '/<doc/d' eu-wiki.txt
 sed -i '/<\/doc/d' eu-wiki.txt
 sed -i '/^$/d' eu-wiki.txt
+python preprocess_basque_corpus.py eu-wiki.txt vocab.eu sentences.eu eu
