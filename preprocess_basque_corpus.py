@@ -9,6 +9,12 @@ import concurrent.futures
 from itertools import repeat
 
 
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 def update_line(line, vocab, unk_token='<UNK>'):
     new_tokens = []
 
@@ -96,16 +102,17 @@ def process_corpus(corpus, min_tokens, max_tokens, size_vocab, sentence_tokenize
     most_common = vocab.most_common(size_vocab)
     vocab = [k for k, c in most_common]
 
-    print(vocab)
-
     print("Updating dataset")
     updated_sentences = []
 
-    #sentences = update_dataset(sentences, vocab)
+    # Break into 1000 chunks
+    num_chunks = 1000
+    chunked_sentences = chunks(sentences, num_chunks)
+    vocab_repeated = repeat(vocab, num_chunks)
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        for updated_sent in executor.map(update_line, sentences, repeat(vocab)):
-            updated_sentences.append(updated_sent)
+        for updated_sents in executor.map(update_dataset, chunked_sentences, vocab_repeated):
+            updated_sentences.extend(updated_sents)
 
             if len(updated_sentences) % 1000 == 0:
                 print("Processed {} sentences".format(len(updated_sentences)))
@@ -144,13 +151,11 @@ def main():
     vocab, sentences = process_corpus(corpus, min_tokens, max_tokens, size_vocab, sentence_tokenizer,
                                       word_tokenizer)
 
-    print(vocab)
+    with open(vocab_file, 'w') as file:
+        file.writelines("%s\n" % line for line in vocab)
 
-    # with open(vocab_file, 'w') as file:
-    #     file.writelines("%s\n" % line for line in vocab)
-    #
-    # with open(output_file, 'w') as file:
-    #     file.writelines("%s\n" % line for line in sentences)
+    with open(output_file, 'w') as file:
+        file.writelines("%s\n" % line for line in sentences)
 
 
 if __name__ == "__main__":
