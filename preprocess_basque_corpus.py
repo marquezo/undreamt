@@ -7,6 +7,7 @@ from collections import Counter
 from nltk.tokenize.treebank import TreebankWordTokenizer
 import concurrent.futures
 from itertools import repeat
+import math
 
 
 def chunks(l, n):
@@ -96,7 +97,7 @@ def process_corpus(corpus, min_tokens, max_tokens, size_vocab, sentence_tokenize
     # Break into 1000 chunks
     num_chunks = 1000
     chunked_sentences = chunks(sentences, num_chunks)
-    vocab_repeated = repeat(vocab, len(chunked_sentences))
+    vocab_repeated = repeat(vocab, math.ceil(len(sentences)/num_chunks))
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         for updated_sents in executor.map(update_dataset, chunked_sentences, vocab_repeated):
