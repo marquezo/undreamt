@@ -5,34 +5,6 @@ from unicodedata import normalize
 from euskalToken import EuskalToken
 from collections import Counter
 from nltk.tokenize.treebank import TreebankWordTokenizer
-import concurrent.futures
-from itertools import repeat
-import math
-
-
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
-
-
-# mark all OOV with "unk" for all lines
-def update_dataset(lines, vocab, unk_token='<UNK>'):
-    new_lines = []
-
-    for line in lines:
-        new_tokens = []
-
-        for token in line.split():
-            if token in vocab:
-                new_tokens.append(token)
-            else:
-                new_tokens.append(unk_token)
-
-        new_line = ' '.join(new_tokens)
-        new_lines.append(new_line)
-
-    return new_lines
 
 
 # clean a list of lines, tokenize using basque tokenizer and respect the min and max # of tokens per sentence
@@ -91,27 +63,12 @@ def process_corpus(corpus, min_tokens, max_tokens, size_vocab, sentence_tokenize
     most_common = vocab.most_common(size_vocab)
     vocab = [k for k, c in most_common]
 
-    print("Updating dataset")
-    updated_sentences = []
-
-    # Break into 1000 chunks
-    num_chunks = 1000
-    chunked_sentences = chunks(sentences, num_chunks)
-    vocab_repeated = repeat(vocab, math.ceil(len(sentences)/num_chunks))
-
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        for updated_sents in executor.map(update_dataset, chunked_sentences, vocab_repeated):
-            updated_sentences.extend(updated_sents)
-
-            if len(updated_sentences) % 10000 == 0:
-                print("Processed {} sentences".format(len(updated_sentences)))
-
-    return vocab, updated_sentences
+    return vocab, sentences
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Given a Basque corpus, create vocabulary and tokenize sentences")
-    parser.add_argument("corpus", help="Basque corpus", type=str)
+    parser = argparse.ArgumentParser(description="Given a corpus, create vocabulary and tokenize sentences")
+    parser.add_argument("corpus", help="Corpus", type=str)
     parser.add_argument("vocab", help="File where to output vocabulary", type=str)
     parser.add_argument("sentences", help="File where to output the pre-processed sentences", type=str)
     parser.add_argument("lang", help="English or Basque", type=str, choices=['eu', 'en'])

@@ -1,3 +1,10 @@
+Order of pre-processing should be:
+
+`python preprocess_corpus.py INPUT_CORPUS VOCAB_FILE SENTENCES.TXT EU|EN`
+`python extract_vocab.py EMBEDDINGS_FILE VOCAB_FILE OUTPUT_EMBEDDINGS_FILE`
+`python update_corpus.py SENTENCES.TXT OUTPUT_EMBEDDINGS_FILE TRAIN_SENTENCES.TXT`
+
+
 UNdreaMT: Unsupervised Neural Machine Translation
 ==============
 
