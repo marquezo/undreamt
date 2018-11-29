@@ -1,8 +1,19 @@
+Need python3 and NLTK
+
 Order of pre-processing should be:
 
-`python preprocess_corpus.py INPUT_CORPUS VOCAB_FILE SENTENCES.TXT EU|EN`
-`python extract_vocab.py EMBEDDINGS_FILE VOCAB_FILE OUTPUT_EMBEDDINGS_FILE`
-`python update_corpus.py SENTENCES.TXT OUTPUT_EMBEDDINGS_FILE TRAIN_SENTENCES.TXT`
+* `bash prep_eu_wiki.sh`
+* `bash prep_en_data.sh`
+* `bash download_embeddings.sh`
+* `python extract_vocab.py cc.eu.300.vec vocab.eu train_vocab.eu`
+* `python extract_vocab.py wiki-news-300d-1M.vec vocab.en train_vocab.en`
+* `python update_corpus.py sentences.en train_vocab.en train_sentences.en`
+* `python update_corpus.py sentences.eu train_vocab.eu train_sentences.eu`
+
+Then to use vecmap we need to git clone it
+
+* `cd vecmap`
+* `nohup python3 map_embeddings,py --semi_supervised ../undreamt/train_dict.txt ../undreamt/train_emb.en ../undreamt/train_emb.eu ../undreamt/train_emb_mapped.en ../undreamt/train_emb_mapped.eu > out.log &`
 
 
 UNdreaMT: Unsupervised Neural Machine Translation
