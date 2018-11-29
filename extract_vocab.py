@@ -29,6 +29,12 @@ def main():
 
         if tokens[0] in vocab:
             data[tokens[0]] = tokens[1:]
+            # already found token so remove it from vocab
+            vocab.remove(tokens[0])
+
+        # Once we cover all vocabulary, exit
+        if not vocab:
+            break
 
     with open(output_embs, 'w') as file:
         file.write("{} {}\n".format(len(data), d))
