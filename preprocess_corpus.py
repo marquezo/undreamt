@@ -27,10 +27,10 @@ def clean_lines(lines, min_tokens, max_tokens, word_tokenizer):
         line = [word.lower() for word in line]
         # remove punctuation from each token - Maybe not because we lose punctuation inside a sentence
         #line = [word.translate(table) for word in line]
-        # remove non-printable chars form each token
+        # remove non-printable chars from each token
         line = [re_print.sub('', w) for w in line]
-        # remove tokens with numbers in them
-        line = [word for word in line if word.isalpha()]
+        # remove tokens with numbers in them - Maybe not because we lose punctuation
+        # line = [word for word in line if word.isalpha()]
 
         if min_tokens <= len(line) <= max_tokens:
             # store as string
