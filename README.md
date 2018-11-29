@@ -6,6 +6,10 @@ Requirements
 - Python 3
 - PyTorch (tested with v0.3)
 - NLTK
+- tqdm
+- Also, need to do:
+  `import nltk`
+  `nltk.download('punkt')`
 
 Order of pre-processing should be:
 
