@@ -6,6 +6,7 @@ Requirements
 - Python 3
 - PyTorch (tested with v0.3)
 - NLTK
+- tqdm
 
 Order of pre-processing should be:
 
