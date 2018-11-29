@@ -37,6 +37,9 @@ def process_corpus(corpus, vocab_file):
     with open(vocab_file, 'r') as file:
         vocab = [line.rstrip().split()[0] for line in file.readlines()]
 
+    # Get rid of the number of tokens in this embeddings file
+    vocab.pop(0)
+
     print("Updating dataset")
     updated_sentences = []
 
@@ -49,7 +52,7 @@ def process_corpus(corpus, vocab_file):
         for updated_sents in executor.map(update_dataset, chunked_sentences, vocab_repeated):
             updated_sentences.extend(updated_sents)
 
-            if len(updated_sentences) % 10000 == 0:
+            if len(updated_sentences) % 100000 == 0:
                 print("Processed {} sentences".format(len(updated_sentences)))
 
     return updated_sentences
