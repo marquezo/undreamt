@@ -18,6 +18,8 @@ Order of pre-processing should be:
 * `bash download_embeddings.sh`
 * `python extract_vocab.py cc.eu.300.vec vocab.eu train_vocab.eu`
 * `python extract_vocab.py wiki-news-300d-1M.vec vocab.en train_vocab.en`
+
+No need to do the following two steps as Artetxe's code uses "OOV" if token is not in supplied vocab
 * `python update_corpus.py sentences.en train_vocab.en train_sentences.en`
 * `python update_corpus.py sentences.eu train_vocab.eu train_sentences.eu`
 
