@@ -1,7 +1,7 @@
 Trying out Artetxe's [UNdreaMT](https://github.com/artetxem/undreamt) on English-Basque
 ==================
 
-The goal is to see whether Artetxe's method works on a low-resource pair such as English-Basque, in particular if we can do better than the results reported in ["English-Basque Statistical and Neural Machine Translation"](http://www.lrec-conf.org/proceedings/lrec2018/pdf/101.pdf) where they only trained with 100M phrase pairs (very small dataset).
+The goal is to see whether Artetxe's method works on a low-resource pair such as English-Basque, in particular if we can do better than the results reported in ["English-Basque Statistical and Neural Machine Translation"](http://www.lrec-conf.org/proceedings/lrec2018/pdf/101.pdf) where they only trained with about 130,000 phrase pairs (small dataset).
 
 Results of vecmap on English-Basque on 30 pairs (test_dict.txt)
 -------------
