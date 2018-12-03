@@ -41,3 +41,4 @@ Then to use [vecmap](https://github.com/artetxem/vecmap) we need to git clone it
 * `cd vecmap`
 * `nohup python3 map_embeddings.py --semi_supervised ../undreamt/train_dict.txt ../undreamt/train_vocab.en ../undreamt/train_vocab.eu ../undreamt/train_emb_mapped.en ../undreamt/train_emb_mapped.eu > out.log &`
 
+Evaluation data was taken from https://github.com/ijauregiCMCRC/english_basque_MT
