@@ -19,11 +19,13 @@ import random
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+import numpy as np
+from noise_functions import remove_one_noise
 
 
 class Translator:
     def __init__(self, encoder_embeddings, decoder_embeddings, generator, src_dictionary, trg_dictionary, encoder,
-                 decoder, denoising=True, device=devices.default):
+                 decoder, denoising=True, device=devices.default, noise_type='orig'):
         self.encoder_embeddings = encoder_embeddings
         self.decoder_embeddings = decoder_embeddings
         self.generator = generator
@@ -36,6 +38,7 @@ class Translator:
         weight = device(torch.ones(generator.output_classes()))
         weight[data.PAD] = 0
         self.criterion = nn.NLLLoss(weight, size_average=False)
+        self.noise_type = noise_type
 
     def _train(self, mode):
         self.encoder_embeddings.train(mode)
@@ -49,12 +52,21 @@ class Translator:
         self._train(train)
         ids, lengths = self.src_dictionary.sentences2ids(sentences, sos=False, eos=True)
 
+        # ids: len x batch
+        # lengths exclude padding
         if train and self.denoising:  # Add order noise
-            for i, length in enumerate(lengths):
-                if length > 2:
-                    for it in range(length//2):
-                        j = random.randint(0, length-2)
-                        ids[j][i], ids[j+1][i] = ids[j+1][i], ids[j][i]
+
+            if self.noise_type == 'orig':
+                for i, length in enumerate(lengths):
+                    if length > 2:
+                        for it in range(length//2):
+                            j = random.randint(0, length-2) # -2 because of EOS token, randint is inclusive
+                            ids[j][i], ids[j+1][i] = ids[j+1][i], ids[j][i] # fix i because it denotes the sentence
+            elif self.noise_type == 'remove_one':
+                noised = remove_one_noise(ids, lengths, data.PAD)
+                ids = noised.tolist()
+            else:
+                raise Exception("Invalid noise type in translator")
 
         varids = self.device(Variable(torch.LongTensor(ids), requires_grad=False, volatile=not train))
         hidden = self.device(self.encoder.initial_hidden(len(sentences)))

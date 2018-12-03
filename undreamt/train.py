@@ -58,6 +58,7 @@ def main_train():
     architecture_group.add_argument('--disable_bidirectional', action='store_true', help='use a single direction encoder')
     architecture_group.add_argument('--disable_denoising', action='store_true', help='disable random swaps')
     architecture_group.add_argument('--disable_backtranslation', action='store_true', help='disable backtranslation')
+    architecture_group.add_argument('--noise_type', choices=['orig', 'remove_one'], default='orig', help="Type of noise to use")
 
     # Optimization
     optimization_group = parser.add_argument_group('optimization', 'Optimization related arguments')
@@ -86,6 +87,8 @@ def main_train():
 
     # Parse arguments
     args = parser.parse_args()
+
+    print('Noise type is {}'.format(args.noise_type))
 
     # Validate arguments
     if args.src_embeddings is None and args.src_vocabulary is None or args.trg_embeddings is None and args.trg_vocabulary is None:
@@ -199,19 +202,23 @@ def main_train():
     src2src_translator = Translator(encoder_embeddings=src_encoder_embeddings,
                                     decoder_embeddings=src_decoder_embeddings, generator=src_generator,
                                     src_dictionary=src_dictionary, trg_dictionary=src_dictionary, encoder=encoder,
-                                    decoder=src_decoder, denoising=not args.disable_denoising, device=device)
+                                    decoder=src_decoder, denoising=not args.disable_denoising, device=device,
+                                    noise_type=args.noise_type)
     src2trg_translator = Translator(encoder_embeddings=src_encoder_embeddings,
                                     decoder_embeddings=trg_decoder_embeddings, generator=trg_generator,
                                     src_dictionary=src_dictionary, trg_dictionary=trg_dictionary, encoder=encoder,
-                                    decoder=trg_decoder, denoising=not args.disable_denoising, device=device)
+                                    decoder=trg_decoder, denoising=not args.disable_denoising, device=device,
+                                    noise_type=args.noise_type)
     trg2trg_translator = Translator(encoder_embeddings=trg_encoder_embeddings,
                                     decoder_embeddings=trg_decoder_embeddings, generator=trg_generator,
                                     src_dictionary=trg_dictionary, trg_dictionary=trg_dictionary, encoder=encoder,
-                                    decoder=trg_decoder, denoising=not args.disable_denoising, device=device)
+                                    decoder=trg_decoder, denoising=not args.disable_denoising, device=device,
+                                    noise_type=args.noise_type)
     trg2src_translator = Translator(encoder_embeddings=trg_encoder_embeddings,
                                     decoder_embeddings=src_decoder_embeddings, generator=src_generator,
                                     src_dictionary=trg_dictionary, trg_dictionary=src_dictionary, encoder=encoder,
-                                    decoder=src_decoder, denoising=not args.disable_denoising, device=device)
+                                    decoder=src_decoder, denoising=not args.disable_denoising, device=device,
+                                    noise_type=args.noise_type)
 
     # Build trainers
     trainers = []

@@ -38,10 +38,11 @@ class Dictionary:
         return ids
 
     def sentences2ids(self, sentences, eos=False, sos=False):
-        ids = [self.sentence2ids(sentence, eos=eos, sos=sos) for sentence in sentences]
-        lengths = [len(s) for s in ids]
+        ids = [self.sentence2ids(sentence, eos=eos, sos=sos) for sentence in sentences] # s[i][j] jth word in ith sent
+        lengths = [len(s) for s in ids] # number of words in each sentence
         ids = [s + [PAD]*(max(lengths)-len(s)) for s in ids]  # Padding
-        ids = [[ids[i][j] for i in range(len(ids))] for j in range(max(lengths))]  # batch*len -> len*batch
+        # batch*len -> len*batch = s[i][j] ith word in jth sent
+        ids = [[ids[i][j] for i in range(len(ids))] for j in range(max(lengths))] # len(ids) = # of sents
         return ids, lengths
 
     def ids2sentence(self, ids):
