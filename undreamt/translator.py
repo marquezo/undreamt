@@ -63,7 +63,6 @@ class Translator:
                             j = random.randint(0, length-2) # -2 because of EOS token, randint is inclusive
                             ids[j][i], ids[j+1][i] = ids[j+1][i], ids[j][i] # fix i because it denotes the sentence
             elif self.noise_type == 'remove_one':
-                print("Remove one noise")
                 ids = remove_one_noise(ids, lengths, data.PAD)
             else:
                 raise Exception("Invalid noise type in translator")
