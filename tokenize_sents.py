@@ -37,11 +37,14 @@ def main():
     parser.add_argument("lang", choices=['en', 'eu'])
     args = parser.parse_args()
 
-    tokenizer = EuskalToken() if args.lang == 'eu' else TreebankWordTokenizer()
+    if args.lang == 'eu':
+        word_tokenizer = EuskalToken()
+    else:
+        word_tokenizer = TreebankWordTokenizer()
 
     with open(args.file, 'r', encoding='utf8') as file:
         line = file.readline().strip()
-        print(tokenizer.tokenize(line))
+        print(word_tokenizer.tokenize(line))
 
 
 if __name__ == '__main__':
