@@ -1,6 +1,7 @@
 import argparse
 import io
 import numpy as np
+import tqdm
 
 
 def load_vec(emb_path, nmax=70000):
@@ -48,7 +49,7 @@ def main():
     src_embeddings, src_id2word, src_word2id = load_vec(args.src_emb)
     trg_embeddings, trg_id2word, trg_word2id = load_vec(args.trg_emb)
 
-    for line in lines:
+    for line in tqdm.tqdm(lines):
         tokens = line.rstrip().split()
         result = []
 
